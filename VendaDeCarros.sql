@@ -26,7 +26,6 @@ INSERT INTO clientes (nome, contato) VALUES ('Ricardo Silva', '11 98888-8888'), 
 
 INSERT INTO funcionarios (id_funcionario, nome, id_gerente) VALUES (1, 'Matheus Kopp', NULL), (2, 'Thiago Mendes', 1), (3, 'Beatriz Silva', 1) ON CONFLICT DO NOTHING;
 
--- Cadastro de 20 Carros com marcas corretas (10 Vendidos e 10 Disponíveis)
 INSERT INTO carros (id_carro, modelo, ano, preco, id_marca, id_status) VALUES 
 (1,'Civic', 2022, 130000, 1, 2), (2,'Corolla', 2023, 145000, 2, 2), (3,'Mustang', 2021, 320000, 3, 2), (4,'Golf', 2020, 180000, 4, 2), (5,'C180', 2021, 185000, 5, 2), (6,'320i', 2023, 290000, 6, 2), (7,'A3', 2020, 145000, 7, 2), (8,'Uno', 2015, 35000, 8, 2), (9,'Onix', 2023, 85000, 9, 2), (10,'HB20', 2024, 92000, 12, 2),
 (11,'911 Carrera', 2024, 950000, 10, 1), (12,'Range Rover', 2023, 380000, 11, 1), (13,'Creta', 2023, 140000, 12, 1), (14,'Sentra', 2024, 155000, 1, 1), (15,'GLA 200', 2023, 295000, 5, 1), (16,'Compass', 2022, 180000, 3, 1), (17,'Kicks', 2023, 115000, 1, 1), (18,'XC60', 2021, 350000, 6, 1), (19,'Cruze', 2022, 125000, 9, 1), (20,'Renegade', 2021, 105000, 3, 1) ON CONFLICT DO NOTHING;
