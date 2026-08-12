@@ -1,4 +1,3 @@
--- 1. SEGURANÇA E ACESSO
 DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'papel_gerente') THEN
@@ -8,8 +7,7 @@ BEGIN
         CREATE ROLE papel_vendedor;
     END IF;
 END $$;
-
--- 2. ESTRUTURA (DDL) 
+ 
 CREATE TABLE IF NOT EXISTS marcas (id_marca SERIAL PRIMARY KEY, nome_marca VARCHAR(50) NOT NULL UNIQUE);
 CREATE TABLE IF NOT EXISTS status_veiculos (id_status SERIAL PRIMARY KEY, descricao VARCHAR(20) NOT NULL UNIQUE);
 CREATE TABLE IF NOT EXISTS clientes (id_cliente SERIAL PRIMARY KEY, nome VARCHAR(100) NOT NULL, contato VARCHAR(50));
@@ -18,7 +16,6 @@ CREATE TABLE IF NOT EXISTS carros (id_carro SERIAL PRIMARY KEY, modelo VARCHAR(5
 CREATE TABLE IF NOT EXISTS vendas (id_venda SERIAL PRIMARY KEY, id_carro INTEGER NOT NULL REFERENCES carros(id_carro), id_cliente INTEGER NOT NULL REFERENCES clientes(id_cliente), data_venda DATE DEFAULT CURRENT_DATE, valor_final NUMERIC(10,2));
 CREATE TABLE IF NOT EXISTS log_precos (id_log SERIAL PRIMARY KEY, id_carro INTEGER, valor_antigo NUMERIC(10,2), valor_novo NUMERIC(10,2), data_alteracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP, usuario_db VARCHAR(50));
 
--- 3. POVOAMENTO (DML) 
 INSERT INTO marcas (id_marca, nome_marca) VALUES (1,'Honda'), (2,'Toyota'), (3,'Ford'), (4,'Volkswagen'), (5,'Mercedes'), (6,'BMW'), (7,'Audi'), (8,'Fiat'), (9,'Chevrolet'), (10,'Porsche'), (11,'Land Rover'), (12,'Hyundai') ON CONFLICT DO NOTHING;
 INSERT INTO status_veiculos (id_status, descricao) VALUES (1,'Disponível'), (2,'Vendido'), (3,'Reservado') ON CONFLICT DO NOTHING;
 
@@ -32,14 +29,12 @@ INSERT INTO carros (id_carro, modelo, ano, preco, id_marca, id_status) VALUES
 
 INSERT INTO vendas (id_carro, id_cliente, valor_final) VALUES (1, 1, 128000), (2, 2, 145000), (3, 3, 320000), (4, 4, 178000), (5, 5, 185000), (6, 6, 285000), (7, 7, 140000), (8, 8, 32000), (9, 9, 83000), (10, 10, 90000) ON CONFLICT DO NOTHING;
 
--- 4. VIEWS
 CREATE OR REPLACE VIEW vw_relatorio_vendas AS
 SELECT v.id_venda, c.modelo, cl.nome AS cliente, v.data_venda, v.valor_final
 FROM vendas v
 JOIN carros c ON v.id_carro = c.id_carro
 JOIN clientes cl ON v.id_cliente = cl.id_cliente;
-
--- 5. PROCEDURES E TRIGGERS (AUTOMAÇÃO) 
+ 
 CREATE OR REPLACE FUNCTION fn_log_preco_carro() RETURNS TRIGGER LANGUAGE plpgsql AS $$
 BEGIN 
     IF OLD.preco <> NEW.preco THEN 
@@ -55,7 +50,6 @@ BEGIN
     UPDATE carros SET id_status = 2 WHERE id_carro = p_id_carro;
 EXCEPTION WHEN OTHERS THEN RAISE EXCEPTION 'Erro: %. Transação abortada.', SQLERRM; END; $$;
 
--- 6. PERMISSÕES REFINADAS (DCL)
 GRANT SELECT ON marcas, status_veiculos, carros, vw_relatorio_vendas TO papel_vendedor;
 GRANT INSERT ON vendas, clientes TO papel_vendedor;
 GRANT ALL ON ALL TABLES IN SCHEMA public TO papel_gerente;
